@@ -5,7 +5,7 @@ await client.connect()
 
 const query = {
   text: 'SELECT * FROM airports WHERE city = $1;',
-  values: ['Москва'],
+  values: ['Москва']
 }
 
 const result = await client.query(query)

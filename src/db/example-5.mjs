@@ -6,7 +6,7 @@ await client.connect()
 const getAirportsByCity = async city => {
   const query = {
     text: 'SELECT airport_name, city FROM airports WHERE city LIKE $1;',
-    values: [`%${city}`],
+    values: [`%${city}`]
   }
 
   const result = await client.query(query)
