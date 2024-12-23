@@ -1,16 +1,8 @@
 import { test, expect } from '@playwright/test'
+import { loginUser } from '../framework'
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/login')
-
-  await page.getByTestId('input-email').click()
-  await page.getByTestId('input-email').fill('test@mail.ru')
-
-  await page.getByTestId('input-password').click()
-  await page.getByTestId('input-password').fill('P@ssw0rd')
-  await page.getByTestId('btn-submit').click()
-
-  await expect(page).toHaveURL('/?feed=feed')
+  await loginUser(page)
 })
 
 test('Создание страницы', async ({ page }) => {

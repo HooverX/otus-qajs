@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { faker } from '@faker-js/faker'
 import { LoginPage, AuthPage } from '../framework'
+import configRWA from '../framework/config/configRWA'
 
 test('Создание нового юзера', async ({ page }) => {
   const authPage = AuthPage({ page })
@@ -20,8 +21,8 @@ test('Успешная авторизация', async ({ page }) => {
 
   await loginPage.visit()
 
-  await loginPage.fillEmail('test@mail.ru')
-  await loginPage.fillPassword('P@ssw0rd')
+  await loginPage.fillEmail(configRWA.email)
+  await loginPage.fillPassword(configRWA.password)
   await loginPage.submit()
 
   await expect(page).toHaveURL('/?feed=feed')

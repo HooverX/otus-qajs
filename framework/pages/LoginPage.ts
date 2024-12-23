@@ -1,4 +1,5 @@
 import type { Page } from 'playwright-core'
+import { expect } from '@playwright/test'
 
 export function LoginPage({ page }: { page: Page }) {
   const visit = async () => {
@@ -17,10 +18,19 @@ export function LoginPage({ page }: { page: Page }) {
     await page.getByTestId('btn-submit').click()
   }
 
+  const login = async ({ email, password }: { email: string; password: string }) => {
+    await visit()
+    await fillEmail(email)
+    await fillPassword(password)
+    await submit()
+    await expect(page).toHaveURL('/?feed=feed')
+  }
+
   return {
     visit,
     fillEmail,
     fillPassword,
-    submit
+    submit,
+    login
   }
 }
