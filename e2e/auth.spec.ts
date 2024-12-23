@@ -1,30 +1,45 @@
-// @ts-check
 import { test, expect } from '@playwright/test'
 import { faker } from '@faker-js/faker'
+import { LoginPage, AuthPage } from '../framework'
 
 test('Создание нового юзера', async ({ page }) => {
-  await page.goto('/register')
-  await page.getByTestId('input-username').click()
-  await page.getByTestId('input-username').fill(faker.person.fullName())
-  await page.getByTestId('input-email').click()
-  await page.getByTestId('input-email').fill(faker.internet.email())
-  await page.getByTestId('input-email').press('Tab')
-  await page.getByTestId('input-password').fill('re@l_passw0rd')
-  await page.getByTestId('btn-submit').click()
+  const authPage = AuthPage({ page })
+
+  await authPage.visit()
+  await authPage.fillUsername(faker.person.fullName())
+  await authPage.fillEmail(faker.internet.email())
+  await authPage.fillPassword('re@l_passw0rd')
+
+  await authPage.submit()
 
   await expect(page).toHaveURL('/?feed=feed')
 })
 
 test('Успешная авторизация', async ({ page }) => {
-  await page.goto('/login')
+  const loginPage = LoginPage({ page })
 
-  await page.getByTestId('input-email').click()
-  await page.getByTestId('input-email').fill('test@mail.ru')
+  await loginPage.visit()
 
-  await page.getByTestId('input-password').click()
-  await page.getByTestId('input-password').fill('P@ssw0rd')
-  await page.getByTestId('btn-submit').click()
-  await page.getByText('A place to share your').click()
+  await loginPage.fillEmail('test@mail.ru')
+  await loginPage.fillPassword('P@ssw0rd')
+  await loginPage.submit()
+
+  await expect(page).toHaveURL('/?feed=feed')
+
   await expect(page.getByText('A place to share your')).toBeVisible()
   await expect(page.getByRole('link', { name: 'test test' })).toBeVisible()
+})
+
+test('Несуществующий пользователь, не может зайти в систему', async ({ page }) => {
+  const loginPage = LoginPage({ page })
+
+  await loginPage.visit()
+
+  await loginPage.fillEmail('undefined@mail.ru')
+  await loginPage.fillPassword('P@ssw0rd')
+  await loginPage.submit()
+
+  await expect(page).toHaveURL('/login/error?error=CredentialsSignin&provider=credentials')
+
+  await expect(page.getByText('This page could not be found.')).toBeVisible()
 })
