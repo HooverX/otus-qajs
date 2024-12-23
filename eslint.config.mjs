@@ -15,7 +15,7 @@ export default tseslint.config(
   // ...tseslint.configs.strict,
   ...tseslint.configs.stylistic,
   {
-    ignores: ['reports']
+    ignores: ['reports', 'playwright-report', 'test-results']
   },
   {
     files: ['scripts/**/*.zx.js'],
