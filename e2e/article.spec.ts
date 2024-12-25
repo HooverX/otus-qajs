@@ -11,12 +11,11 @@ test('Создание страницы', async ({ page }) => {
   // HeaderElement
   await page.getByRole('link', { name: 'New Post' }).click()
 
-  // EditPage
   await editorPage.fillTitle('article title')
   await editorPage.fillAbout('about article')
   await editorPage.fillContent('article content')
   await editorPage.addTags(['e2e'])
-  await editorPage.submit()
+  await editorPage.publish()
 
   // ArticlePage
   await expect(page.getByRole('heading')).toContainText('article title')
@@ -24,25 +23,29 @@ test('Создание страницы', async ({ page }) => {
 })
 
 test('Обновление страницы', async ({ page }) => {
+  const editorPage = EditorPage({ page })
+
   // ArticlePage
   await page.goto('/article/e2e-update-kak-testirovat')
   await page.getByRole('button', { name: 'Edit Article' }).first().click()
 
   // EditorPage
-  await page.waitForURL('/editor/e2e-update-kak-testirovat')
-  await page.getByPlaceholder('Write your article (in').fill('[E2E] [Update] Как тестировать EDIT')
-  await page.getByRole('button', { name: 'Publish Article' }).click()
+  await editorPage.isOpen('e2e-update-kak-testirovat')
+  await editorPage.fillContent('[E2E] [Update] Как тестировать EDIT')
+  await editorPage.publish()
 
   // ArticlePage
   await expect(page.getByText('[E2E] [Update] Как тестировать EDIT')).toBeVisible()
   await page.getByRole('button', { name: 'Edit Article' }).first().click()
 
   // EditorPage
-  await page.waitForURL('/editor/e2e-update-kak-testirovat')
-  await page.getByPlaceholder('Write your article (in').fill('[E2E] [Update] Как тестировать UPDATED')
-  // для примера отладки, нужно не забывать удалять
+  await editorPage.isOpen('e2e-update-kak-testirovat')
+  await editorPage.fillContent('[E2E] [Update] Как тестировать UPDATED')
+
+  // для примера отладки, в рабочем проекте такое не стоит оставлять
   await page.pause()
-  await page.getByRole('button', { name: 'Publish Article' }).click()
+
+  await editorPage.publish()
 
   // ArticlePage
   await page.waitForURL('/article/e2e-update-kak-testirovat')
@@ -54,18 +57,19 @@ test('Обновление страницы', async ({ page }) => {
 })
 
 test('Удаление страницы', async ({ page }) => {
+  const editorPage = EditorPage({ page })
+
   // EditorPage
   // создаём новую
   await page.getByRole('link', { name: 'New Post' }).click()
-  await page.getByPlaceholder('Article Title').fill('Article for delete')
-  await page.getByPlaceholder('Write your article (in').fill('Эта статья должна быть удалена! Такая вот судьба')
-  await page.getByPlaceholder('Enter tags').fill('E2E')
 
+  await editorPage.fillTitle('Article for delete')
+  await editorPage.fillContent('Эта статья должна быть удалена! Такая вот судьба')
+  await editorPage.addTags(['E2E'])
   const responseCreatePromise = page.waitForResponse(request => {
     return request.url().includes('/api/articles') && request.request().method() === 'POST'
   })
-  await page.getByRole('button', { name: 'Publish Article' }).click()
-
+  await editorPage.publish()
   await responseCreatePromise
 
   // ArticlePage

@@ -5,6 +5,10 @@ export function EditorPage({ page }: { page: Page }) {
     await page.goto(`/editor/${slug}`)
   }
 
+  const isOpen = async (slug: string | undefined) => {
+    await page.waitForURL(`/editor/${slug}`)
+  }
+
   const fillTitle = async (title: string) => {
     await page.getByPlaceholder('Article Title').fill(title)
   }
@@ -21,16 +25,17 @@ export function EditorPage({ page }: { page: Page }) {
     await page.getByPlaceholder('Enter tags').fill(tags.join(' '))
   }
 
-  const submit = async () => {
+  const publish = async () => {
     await page.getByRole('button', { name: 'Publish Article' }).click()
   }
 
   return {
     visit,
+    isOpen,
     fillTitle,
     fillAbout,
     fillContent,
     addTags,
-    submit
+    publish
   }
 }
