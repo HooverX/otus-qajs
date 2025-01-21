@@ -42,4 +42,5 @@ const getCourse = prefix => {
 const path = `/courses/${getCourse('otus')}/`
 console.log(path)
 
+// eslint-disable-next-line
 const unUsed = 1
