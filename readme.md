@@ -1,1 +1,1 @@
-# Otus QA JS
+# Otus QA JS 2025
