@@ -13,3 +13,4 @@ function newYear(character) {
 
 console.log(newYear('Дед Мороз'))
 console.log(newYear('Снегурочка'))
+  
