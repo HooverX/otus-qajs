@@ -12,5 +12,3 @@ function kolobok(character) {
 console.log(kolobok('дедушка'))
 console.log(kolobok('заяц'))
 console.log(kolobok('лиса'))
-
-    
